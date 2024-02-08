@@ -7,6 +7,7 @@ import { LoginModule } from '../login/login.module';
 import { ApiService } from './api.service';
 import { HttpClientModule } from '@angular/common/http';
 import { MatDialogModule } from '@angular/material/dialog';
+import { HomeModule } from '../home/home.module';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     LoginModule,
     HttpClientModule,
     MatDialogModule,
+    HomeModule
   ],
   providers: [
     provideClientHydration(),

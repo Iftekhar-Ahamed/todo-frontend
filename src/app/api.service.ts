@@ -14,4 +14,8 @@ export class ApiService {
     const apiUrl = this.baseUrl + url;
     return this.http.get<any>(apiUrl);
   }
+  getTodos(url: string): Observable<any> {
+    const apiUrl = this.baseUrl + url;
+    return this.http.get<any>(apiUrl);
+  }
 }
