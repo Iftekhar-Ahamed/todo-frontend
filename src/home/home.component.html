@@ -3,20 +3,34 @@
     <h1>Todo List</h1>
 
     <div class="add-todo">
-        <input type="text" [(ngModel)]="newItemText" placeholder="Task">
-        <input type="date" [(ngModel)]="newItemDate" placeholder="Due Date">
-        <select [(ngModel)]="newItemPriority" placeholder="Priority">
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-        </select>
+        <div class="form-group">
+            <label for="task">Task:</label>
+            <input type="text" id="task" [(ngModel)]="newtodoItem.taskName" placeholder="Task">
+        </div>
+
+        <div class="form-group">
+            <label for="dueDate">Due Date:</label>
+            <input type="date" id="dueDate" [(ngModel)]="newtodoItem.expireDateTime" placeholder="Due Date">
+        </div>
+
+        <div class="form-group">
+            <label for="priority">Priority:</label>
+            <select id="priority" [(ngModel)]="newtodoItem.priorityId" placeholder="Priority">
+                <option *ngFor="let priority of prioritiesFromApi" [value]="priority.value">
+                    {{ priority.name }}
+                </option>
+            </select>
+        </div>
+
         <button (click)="addTodo()">Add</button>
     </div>
+
+
 
     <ul>
         <li *ngFor="let todo of todoItems; let i = index" [ngClass]="{ 'completed': todo.status }">
             <input type="checkbox" [(ngModel)]="todo.status" (change)="updateTodoStatus(todo)">
-            <span>{{ todo.taskName }} (Due Date: {{ todo.expireDateTime }}, Priority: {{ todo.priorityId }})</span>
+            <span>{{ todo.taskName }} Due Date: {{ todo.expireDateTime }} Priority: {{ todo.priorityId }}</span>
             <button (click)="deleteTodo(i)">Delete</button>
         </li>
     </ul>

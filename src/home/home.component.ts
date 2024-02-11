@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../app/api.service';
-import { url } from 'inspector';
 
 interface TodoItem {
   taskId: number;
@@ -9,8 +8,22 @@ interface TodoItem {
   expireDateTime: Date;
   creationDateTime: Date;
   priorityId: number;
+  priorityName: string;
   userId: number;
   status: boolean;
+}
+interface payloadTodoItem {
+  taskName: string;
+  taskDescription: string;
+  expireDateTime: Date;
+  creationDateTime: Date;
+  priorityId: number;
+  userId: number;
+  status: boolean;
+}
+interface priorities {
+  value: number;
+  name: string;
 }
 
 @Component({
@@ -21,16 +34,31 @@ interface TodoItem {
 
 export class HomeComponent {
   todoItems: TodoItem[] = [];
-  newItemText: string = '';
-  newItemDate: Date = new Date();
-  newItemPriority: number = 0;
+  prioritiesFromApi: priorities[] = [];
+  newtodoItem: payloadTodoItem = {
+    taskName: '',
+    taskDescription: '',
+    expireDateTime: new Date(),
+    creationDateTime: new Date(),
+    priorityId: 0,
+    userId: 0,
+    status: false
+  };
 
   constructor(private apiService: ApiService) { }
 
   ngOnInit() {
+    this.refreshPage();
+  }
+  refreshPage() {
+    this.getAllTask();
+    this.getDDL();
+  }
+  getAllTask() {
     const url = "/ToDo/GetAllTaskByUserId?UserId=1&OrderBy=ASC&PageNo=0&PageSize=20";
     this.apiService.getTodos(url).subscribe(
       res => {
+        this.todoItems = [];
         for (const item of res.data) {
           this.todoItems.push(item);
         }
@@ -41,22 +69,26 @@ export class HomeComponent {
       }
     );
   }
+  getDDL() {
+    const urlddl = "/ToDo/GetPriorityDDL?OrderBy=DESC";
+    this.apiService.getPriorityDDL(urlddl).subscribe(
+      res => {
+        for (const item of res) {
+          this.prioritiesFromApi.push(item);
+        }
+
+      },
+      (error) => {
+        console.error('Error fetching todos:', error);
+      }
+    );
+  }
 
   addTodo() {
-    if (this.newItemText.trim() !== '') {
-      const newTodo: TodoItem = {
-        userId: 1,
-        taskDescription: this.newItemText,
-        taskId: Date.now(),
-        taskName: this.newItemText,
-        expireDateTime: this.newItemDate,
-        creationDateTime: new Date(),
-        priorityId: this.newItemPriority,
-        status: false
-      };
-      this.todoItems.push(newTodo);
-      this.newItemText = '';
-      this.newItemDate = new Date();
+    if (this.newtodoItem.taskName.trim() !== '') {
+      console.log(this.newtodoItem);
+      console.log(this.apiService.createTask(this.newtodoItem, "/ToDo/CreateTask"));
+      this.refreshPage();
     }
   }
 
@@ -66,5 +98,12 @@ export class HomeComponent {
 
   deleteTodo(index: number) {
     this.todoItems.splice(index, 1);
+  }
+  resetTodoItem() {
+    this.newtodoItem.taskName = '';
+    this.newtodoItem.taskDescription = '';
+    this.newtodoItem.expireDateTime = new Date();
+    this.newtodoItem.priorityId = 0;
+    this.newtodoItem.status = false;
   }
 }

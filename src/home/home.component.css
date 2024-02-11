@@ -3,9 +3,6 @@
     margin: auto;
 }
 
-.add-todo {
-    margin-bottom: 16px;
-}
 
 ul {
     list-style-type: none;
@@ -25,4 +22,20 @@ span {
 .completed {
     text-decoration: line-through;
     color: #888;
+}
+
+.add-todo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.form-group {
+    margin-right: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
 }
