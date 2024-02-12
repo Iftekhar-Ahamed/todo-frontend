@@ -4,6 +4,7 @@ import { ApiService } from '../app/api.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { PopupComponent } from '../app/popup/popup.component';
+import { DataserviceService } from '../app/dataservice.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,7 @@ export class LoginComponent {
   usernameInput: string = '';
   passwordInput: string = '';
 
-  constructor(private apiService: ApiService, private router: Router, private dialog: MatDialog) {
+  constructor(private apiService: ApiService, private router: Router, private dialog: MatDialog, private data: DataserviceService) {
   }
 
   onSubmit() {
@@ -23,9 +24,16 @@ export class LoginComponent {
     if (this.usernameInput.length == 0 || this.passwordInput.length == 0) {
       return;
     }
-    this.apiService.logIn(apiUrl).subscribe(
+    this.apiService.getOperation(apiUrl).subscribe(
       (res) => {
-        console.log(res.value);
+        console.log(res.value.userInfo);
+
+        this.data.userInfo.userId = res.value.userInfo.userId;
+        this.data.userInfo.userFirstName = res.value.userInfo.firstName;
+        this.data.userInfo.userSecondName = res.value.userInfo.lastName;
+        this.data.userInfo.userTypeId = res.value.userInfo.userType;
+        this.data.setData();
+
         if (res.value.message.message == "Welcome User") {
           this.router.navigate(['/home']);
         } else {

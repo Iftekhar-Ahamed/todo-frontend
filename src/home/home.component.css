@@ -84,6 +84,14 @@ label {
     margin-right: 5px;
 }
 
+.small-datepicker-input {
+    font-size: 12px;
+    /* Adjust the font size as needed */
+    padding: 2px;
+    /* Adjust the padding as needed */
+    /* Add any other styling as needed */
+}
+
 .add-button {
     background-color: #04a735;
     color: #fff;

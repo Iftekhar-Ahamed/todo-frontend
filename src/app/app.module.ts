@@ -8,6 +8,7 @@ import { ApiService } from './api.service';
 import { HttpClientModule } from '@angular/common/http';
 import { MatDialogModule } from '@angular/material/dialog';
 import { HomeModule } from '../home/home.module';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 @NgModule({
   declarations: [
@@ -19,11 +20,12 @@ import { HomeModule } from '../home/home.module';
     LoginModule,
     HttpClientModule,
     MatDialogModule,
-    HomeModule
+    HomeModule,
   ],
   providers: [
     provideClientHydration(),
-    ApiService
+    ApiService,
+    provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]
 })

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../app/api.service';
+import { DataserviceService } from '../app/dataservice.service';
 
 interface TodoItem {
   taskId: number;
@@ -60,7 +61,7 @@ export class HomeComponent {
   isAddButtonVisible: boolean = true;
   isEditButtonVisible: boolean = false;
 
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService, private dataservice: DataserviceService) { }
 
   ngOnInit() {
     this.refreshPage();
@@ -71,8 +72,8 @@ export class HomeComponent {
     this.resetTodoItem();
   }
   getAllTask() {
-    const url = "/ToDo/GetAllTaskByUserId?UserId=1&OrderBy=ASC&PageNo=0&PageSize=20";
-    this.apiService.getTodos(url).subscribe(
+    const url = "/ToDo/GetAllTaskByUserId?UserId=" + this.dataservice.userInfo.userId + "&OrderBy=ASC&PageNo=0&PageSize=20";
+    this.apiService.getOperation(url).subscribe(
       res => {
         this.todoItems = [];
         for (const item of res.data) {
@@ -89,7 +90,7 @@ export class HomeComponent {
   }
   getDDL() {
     const urlddl = "/ToDo/GetPriorityDDL?OrderBy=DESC";
-    this.apiService.getPriorityDDL(urlddl).subscribe(
+    this.apiService.getOperation(urlddl).subscribe(
       res => {
         this.prioritiesFromApi = [];
         for (const item of res) {
@@ -105,8 +106,8 @@ export class HomeComponent {
 
   addTodo() {
     if (this.newtodoItem.taskName.trim() !== '') {
-      this.newtodoItem.userId = 1;
-      this.apiService.createTask(this.newtodoItem, "/ToDo/CreateTask").subscribe(res => {
+      this.newtodoItem.userId = this.dataservice.userInfo.userId;
+      this.apiService.postOperation(this.newtodoItem, "/ToDo/CreateTask").subscribe(res => {
         this.refreshPage();
       });
 
@@ -124,7 +125,7 @@ export class HomeComponent {
       status: this.todoItems[index].status
     }
 
-    this.apiService.updateTask(updatePayload, "/ToDo/UpdateTaskByTaskId").subscribe(res => {
+    this.apiService.postOperation(updatePayload, "/ToDo/UpdateTaskByTaskId").subscribe(res => {
       this.refreshPage();
     });
   }
@@ -140,7 +141,12 @@ export class HomeComponent {
       status: this.newtodoItem.status
     }
 
-    this.apiService.updateTask(updatePayload, "/ToDo/UpdateTaskByTaskId").subscribe(res => {
+    this.apiService.postOperation(updatePayload, "/ToDo/UpdateTaskByTaskId").subscribe(res => {
+      this.refreshPage();
+    });
+  }
+  deleteTodoItem(index: number) {
+    this.apiService.deleteTask("/ToDo/DeleteTaskByTaskId?TaskId=" + this.todoItems[index].taskId).subscribe(res => {
       this.refreshPage();
     });
   }
@@ -155,11 +161,8 @@ export class HomeComponent {
     this.newtodoItem.creationDateTime = this.todoItems[index].creationDateTime;
     this.newtodoItem.priorityId = this.todoItems[index].priorityId;
     this.newtodoItem.status = this.todoItems[index].status;
-    console.log(this.todoItems[index].expireDateTime.toLocaleDateString('en-GB'));
   }
-  deleteTodo(index: number) {
-    this.todoItems.splice(index, 1);
-  }
+
   resetTodoItem() {
     this.newtodoItem.taskId = 0;
     this.newtodoItem.taskName = '';

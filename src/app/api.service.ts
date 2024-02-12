@@ -10,19 +10,12 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  logIn(url: string): Observable<any> {
+
+  getOperation(url: string): Observable<any> {
     const apiUrl = this.baseUrl + url;
     return this.http.get<any>(apiUrl);
   }
-  getTodos(url: string): Observable<any> {
-    const apiUrl = this.baseUrl + url;
-    return this.http.get<any>(apiUrl);
-  }
-  getPriorityDDL(url: string): Observable<any> {
-    const apiUrl = this.baseUrl + url;
-    return this.http.get<any>(apiUrl);
-  }
-  createTask(taskPayload: any, url: string): Observable<any> {
+  postOperation(taskPayload: any, url: string): Observable<any> {
     const apiUrl = this.baseUrl + url;
     const httpOptions = {
       headers: new HttpHeaders({
@@ -32,13 +25,13 @@ export class ApiService {
     console.log(taskPayload, apiUrl);
     return this.http.post<any>(apiUrl, taskPayload, httpOptions);
   }
-  updateTask(taskPayload: any, url: string): Observable<any> {
+  deleteTask(url: string): Observable<any> {
     const apiUrl = this.baseUrl + url;
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       }),
     };
-    return this.http.post<any>(apiUrl, taskPayload, httpOptions);
+    return this.http.post<any>(apiUrl, httpOptions);
   }
 }

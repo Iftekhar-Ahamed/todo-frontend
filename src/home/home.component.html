@@ -14,9 +14,12 @@
         </div>
 
         <div class="form-group">
-            <label for="dueDate">Due Date:</label>
-            <input type="date" id="dueDate" [(ngModel)]="newtodoItem.expireDateTime" placeholder="Due Date">
+            <input matInput [matDatepicker]="picker" [(ngModel)]="newtodoItem.expireDateTime"
+                class="small-datepicker-input">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
         </div>
+
 
         <div class="form-group">
             <label for="priority">Priority:</label>
@@ -57,7 +60,7 @@
                 </td>
                 <td>
                     <button class="edit-button" (click)="editTodo(i)">Edit</button>
-                    <button class="delete-button" (click)="deleteTodo(i)">Delete</button>
+                    <button class="delete-button" (click)="deleteTodoItem(i)">Delete</button>
 
                 </td>
             </tr>
