@@ -1,7 +1,14 @@
 .todo-container {
-    max-width: 400px;
+    max-width: 800px;
     margin: auto;
 }
+
+.add-todo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 
 
 ul {
@@ -38,4 +45,63 @@ span {
 label {
     display: block;
     margin-bottom: 5px;
+}
+
+.todo-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.todo-table th,
+.todo-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.todo-table th {
+    background-color: #f2f2f2;
+}
+
+.todo-table .completed {
+    background-color: #dff0d8;
+    /* Light green background for completed tasks */
+}
+
+.todo-table input[type="checkbox"] {
+    margin: 0;
+}
+
+.edit-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+.add-button {
+    background-color: #04a735;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+.delete-button {
+    background-color: #ff0000;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-right: 5px;
 }

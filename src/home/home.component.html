@@ -1,11 +1,16 @@
 <!-- todo-list.component.html -->
 <div class="todo-container">
-    <h1>Todo List</h1>
+    <h1> Todo List</h1>
 
     <div class="add-todo">
         <div class="form-group">
             <label for="task">Task:</label>
             <input type="text" id="task" [(ngModel)]="newtodoItem.taskName" placeholder="Task">
+        </div>
+        <div class="form-group">
+            <label for="taskdescription">Task Description:</label>
+            <input type="taskdescription" id="taskdescription" [(ngModel)]="newtodoItem.taskDescription"
+                placeholder="Task Description">
         </div>
 
         <div class="form-group">
@@ -22,16 +27,41 @@
             </select>
         </div>
 
-        <button (click)="addTodo()">Add</button>
+        <button class="add-button" *ngIf="isAddButtonVisible" (click)="addTodo()">Add</button>
+        <button class="edit-button" *ngIf="isEditButtonVisible" (click)="updateTodoItem()">Save</button>
+        <button class="delete-button " *ngIf="isEditButtonVisible" (click)="toggleButtons()">Cancel</button>
+
     </div>
 
 
+    <table class="todo-table">
+        <thead>
+            <tr>
+                <th>Task Name</th>
+                <th>Task Description</th>
+                <th>Due Date</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let todo of todoItems; let i = index" [ngClass]="{ 'completed': todo.status }">
+                <td>{{ todo.taskName }}</td>
+                <td>{{ todo.taskDescription }}</td>
+                <td>{{ todo.expireDateTime.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric'
+                    }) }}</td>
+                <td>{{ todo.priorityName }}</td>
+                <td>
+                    <input type="checkbox" [(ngModel)]="todo.status" (change)="updateTodoItemStatus(i)">
+                </td>
+                <td>
+                    <button class="edit-button" (click)="editTodo(i)">Edit</button>
+                    <button class="delete-button" (click)="deleteTodo(i)">Delete</button>
 
-    <ul>
-        <li *ngFor="let todo of todoItems; let i = index" [ngClass]="{ 'completed': todo.status }">
-            <input type="checkbox" [(ngModel)]="todo.status" (change)="updateTodoStatus(todo)">
-            <span>{{ todo.taskName }} Due Date: {{ todo.expireDateTime }} Priority: {{ todo.priorityId }}</span>
-            <button (click)="deleteTodo(i)">Delete</button>
-        </li>
-    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
 </div>
