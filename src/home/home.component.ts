@@ -37,6 +37,13 @@ interface priorities {
   name: string;
 }
 
+interface sort {
+  priority: string;
+  date: string;
+  select: boolean;
+  searchTerm: string;
+}
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -57,9 +64,18 @@ export class HomeComponent {
     userId: 0,
     status: false
   };
+  sortLanding: sort = {
+    priority: "none",
+    date: "none",
+    select: false,
+    searchTerm: ""
+  }
   buttonLabel: string = 'Add';
   isAddButtonVisible: boolean = true;
   isEditButtonVisible: boolean = false;
+  userName: string = this.dataservice.userInfo.userFirstName + " " + this.dataservice.userInfo.userSecondName;
+
+
 
   constructor(private apiService: ApiService, private dataservice: DataserviceService) { }
 
@@ -72,7 +88,14 @@ export class HomeComponent {
     this.resetTodoItem();
   }
   getAllTask() {
-    const url = "/ToDo/GetAllTaskByUserId?UserId=" + this.dataservice.userInfo.userId + "&OrderBy=ASC&PageNo=0&PageSize=20";
+    const url = "/ToDo/GetAllTaskByUserId?UserId=" + this.dataservice.userInfo.userId +
+      (this.sortLanding.priority !== "none" ? ("&Priority=" + this.sortLanding.priority) : "") +
+      (this.sortLanding.date !== "none" ? ("&creationDate=" + this.sortLanding.date) : "") +
+      "&Status=" + (this.sortLanding.select ? "DESC" : "ASC") +
+      (this.sortLanding.searchTerm !== "" ? ("&searchTerm=" + this.sortLanding.searchTerm) : "")
+      + "&PageNo=0&PageSize=12";
+    this.sortLanding.searchTerm = "";
+
     this.apiService.getOperation(url).subscribe(
       res => {
         this.todoItems = [];

@@ -37,13 +37,11 @@ export class LoginComponent {
         if (res.value.message.message == "Welcome User") {
           this.router.navigate(['/home']);
         } else {
-
           this.openPopup(res.value.message.message);
         }
       },
       (error) => {
-
-        this.openPopup(error);
+        this.openPopup("Server Error");
       }
     );
   }

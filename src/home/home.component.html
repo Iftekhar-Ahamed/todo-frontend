@@ -1,6 +1,49 @@
 <!-- todo-list.component.html -->
 <div class="todo-container">
     <h1> Todo List</h1>
+    <h2> {{userName}}</h2>
+    <div class="sort-todo">
+        <div class="form-group">
+            <p><b>Sort Task By :</b></p>
+        </div>
+        <div class="form-group">
+            <label for="task">Priority</label>
+            <select id="priority" [(ngModel)]="sortLanding.priority" placeholder="Priority">
+                <option value="none">none</option>
+                <option value="ASC">Low to High</option>
+                <option value="DESC">High to Low </option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="taskdescription">Creation Date</label>
+            <select id="priority" [(ngModel)]="sortLanding.date" placeholder="Priority">
+                <option value="none">none</option>
+                <option value="ASC">Oldest</option>
+                <option value="DESC">Earliest </option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="taskdescription">Is Completed</label>
+            <input type="checkbox" [(ngModel)]="sortLanding.select">
+        </div>
+        <div class="form-group">
+            <button class="add-button" (click)="refreshPage()">Ok</button>
+        </div>
+
+    </div>
+    <div class="sort-todo">
+        <div class="form-group">
+            <p><b>Sort Task By :</b></p>
+        </div>
+        <div class="form-group">
+            <label for="task">Search by Task Name</label>
+            <input type="text" id="task" [(ngModel)]="sortLanding.searchTerm" placeholder="Search">
+        </div>
+        <div class="form-group">
+            <button class="add-button" (click)="refreshPage()">Search</button>
+        </div>
+
+    </div>
 
     <div class="add-todo">
         <div class="form-group">
@@ -14,8 +57,7 @@
         </div>
 
         <div class="form-group">
-            <input matInput [matDatepicker]="picker" [(ngModel)]="newtodoItem.expireDateTime"
-                class="small-datepicker-input">
+            <input matInput [matDatepicker]="picker" [(ngModel)]="newtodoItem.expireDateTime">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
         </div>

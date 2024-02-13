@@ -1,5 +1,5 @@
 .todo-container {
-    max-width: 800px;
+    max-width: 1000px;
     margin: auto;
 }
 
@@ -26,6 +26,12 @@ span {
     margin-left: 8px;
 }
 
+.sort-todo {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
 .completed {
     text-decoration: line-through;
     color: #888;
@@ -39,7 +45,7 @@ span {
 }
 
 .form-group {
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 label {
@@ -87,7 +93,7 @@ label {
 .small-datepicker-input {
     font-size: 12px;
     /* Adjust the font size as needed */
-    padding: 2px;
+    padding: 0px;
     /* Adjust the padding as needed */
     /* Add any other styling as needed */
 }
