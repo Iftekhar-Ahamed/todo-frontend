@@ -42,6 +42,9 @@
         <div class="form-group">
             <button class="add-button" (click)="refreshPage()">Search</button>
         </div>
+        <div class="form-group">
+            <button class="add-button" (click)="refreshPage()">All</button>
+        </div>
 
     </div>
 
@@ -84,6 +87,7 @@
             <tr>
                 <th>Task Name</th>
                 <th>Task Description</th>
+                <th>Create Date</th>
                 <th>Due Date</th>
                 <th>Priority</th>
                 <th>Status</th>
@@ -94,6 +98,9 @@
             <tr *ngFor="let todo of todoItems; let i = index" [ngClass]="{ 'completed': todo.status }">
                 <td>{{ todo.taskName }}</td>
                 <td>{{ todo.taskDescription }}</td>
+                <td>{{ todo.creationDateTime.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year:
+                    'numeric'
+                    }) }}</td>
                 <td>{{ todo.expireDateTime.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric'
                     }) }}</td>
                 <td>{{ todo.priorityName }}</td>

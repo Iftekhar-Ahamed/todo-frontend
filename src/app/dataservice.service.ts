@@ -4,6 +4,7 @@ interface UserInfo {
   userFirstName: string;
   userSecondName: string;
   userTypeId: number;
+  userToken: string;
 }
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class DataserviceService {
     userFirstName: "",
     userSecondName: "",
     userTypeId: 0,
+    userToken: ""
   }
   private localStorageKey = 'todoAppData';
   constructor() {

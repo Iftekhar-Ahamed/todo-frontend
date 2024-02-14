@@ -101,6 +101,7 @@ export class HomeComponent {
         this.todoItems = [];
         for (const item of res.data) {
           item.expireDateTime = new Date(item.expireDateTime);
+          item.creationDateTime = new Date(item.creationDateTime)
           this.todoItems.push(item);
 
         }

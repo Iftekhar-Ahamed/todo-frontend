@@ -26,12 +26,11 @@ export class LoginComponent {
     }
     this.apiService.getOperation(apiUrl).subscribe(
       (res) => {
-        console.log(res.value.userInfo);
-
         this.data.userInfo.userId = res.value.userInfo.userId;
         this.data.userInfo.userFirstName = res.value.userInfo.firstName;
         this.data.userInfo.userSecondName = res.value.userInfo.lastName;
         this.data.userInfo.userTypeId = res.value.userInfo.userType;
+        this.data.userInfo.userToken = res.value.message.token;
         this.data.setData();
 
         if (res.value.message.message == "Welcome User") {
