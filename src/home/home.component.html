@@ -1,54 +1,55 @@
 <!-- todo-list.component.html -->
 <div class="todo-container">
-    <h1> Todo List</h1>
-    <h2> {{userName}}</h2>
-    <div class="sort-todo">
+    <div class="title-box">
         <div class="form-group">
-            <p><b>Sort Task By :</b></p>
+            <h1> {{userName}}'s Todo List</h1>
         </div>
-        <div class="form-group">
-            <label for="task">Priority</label>
-            <select id="priority" [(ngModel)]="sortLanding.priority" placeholder="Priority">
-                <option value="none">none</option>
-                <option value="ASC">Low to High</option>
-                <option value="DESC">High to Low </option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="taskdescription">Creation Date</label>
-            <select id="priority" [(ngModel)]="sortLanding.date" placeholder="Priority">
-                <option value="none">none</option>
-                <option value="ASC">Oldest</option>
-                <option value="DESC">Earliest </option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="taskdescription">Is Completed</label>
-            <input type="checkbox" [(ngModel)]="sortLanding.select">
-        </div>
-        <div class="form-group">
-            <button class="add-button" (click)="refreshPage()">Ok</button>
-        </div>
-
     </div>
-    <div class="sort-todo">
-        <div class="form-group">
-            <p><b>Sort Task By :</b></p>
-        </div>
-        <div class="form-group">
-            <label for="task">Search by Task Name</label>
-            <input type="text" id="task" [(ngModel)]="sortLanding.searchTerm" placeholder="Search">
-        </div>
-        <div class="form-group">
-            <button class="add-button" (click)="refreshPage()">Search</button>
-        </div>
-        <div class="form-group">
-            <button class="add-button" (click)="refreshPage()">All</button>
-        </div>
+    <div class="filter-boxes-container">
+        <div class="sort-box">
+            <div class="form-group">
+                <label for="task">Priority</label>
+                <select id="priority" [(ngModel)]="sortLanding.priority" placeholder="Priority">
+                    <option value="none">none</option>
+                    <option value="ASC">Low to High</option>
+                    <option value="DESC">High to Low </option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="taskdescription">Creation Date</label>
+                <select id="priority" [(ngModel)]="sortLanding.date" placeholder="Priority">
+                    <option value="none">none</option>
+                    <option value="ASC">Oldest</option>
+                    <option value="DESC">Earliest </option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="taskdescription">Is Completed</label>
+                <input type="checkbox" [(ngModel)]="sortLanding.select">
+            </div>
+            <div class="form-group">
+                <button class="add-button" (click)="refreshPage()">Show</button>
+            </div>
 
+        </div>
+        <div class="search-box">
+            <div class="form-group">
+            </div>
+            <div class="form-group">
+                <input type="text" id="task" [(ngModel)]="sortLanding.searchTerm" placeholder="Search by Task Name"
+                    class="text-input" (input)="onSearchInputChange()">
+            </div>
+            <div class="form-group">
+                <button class="add-button" (click)="refreshPage()">Search</button>
+            </div>
+            <div class="form-group">
+                <button class="add-button" (click)="refreshPage()">All</button>
+            </div>
+
+        </div>
     </div>
 
-    <div class="add-todo">
+    <div class="input-box">
         <div class="form-group">
             <label for="task">Task:</label>
             <input type="text" id="task" [(ngModel)]="newtodoItem.taskName" placeholder="Task">

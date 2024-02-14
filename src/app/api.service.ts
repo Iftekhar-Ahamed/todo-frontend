@@ -22,10 +22,9 @@ export class ApiService {
     console.log(taskPayload, apiUrl);
     return this.http.post<any>(apiUrl, taskPayload, this.getRequestOptions());
   }
-  deleteTask(url: string): Observable<any> {
+  deleteTask(url: string, taskPayload: any): Observable<any> {
     const apiUrl = this.baseUrl + url;
-
-    return this.http.post<any>(apiUrl, this.getRequestOptions());
+    return this.http.post<any>(apiUrl, taskPayload, this.getRequestOptions());
   }
   private getRequestOptions() {
     const headers = new HttpHeaders({

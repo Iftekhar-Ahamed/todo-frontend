@@ -170,9 +170,12 @@ export class HomeComponent {
     });
   }
   deleteTodoItem(index: number) {
-    this.apiService.deleteTask("/ToDo/DeleteTaskByTaskId?TaskId=" + this.todoItems[index].taskId).subscribe(res => {
+    this.apiService.deleteTask("/ToDo/DeleteTaskByTaskId", this.todoItems[index].taskId).subscribe(res => {
       this.refreshPage();
     });
+  }
+  onSearchInputChange() {
+    this.getAllTask();
   }
   editTodo(index: number) {
     if (!this.isEditButtonVisible) {
