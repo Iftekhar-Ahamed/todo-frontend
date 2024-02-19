@@ -11,8 +11,8 @@
             <tbody>
                 <tr *ngFor="let i of userTaskReport;">
                     <td>{{ i.priorityName }}</td>
-                    <td>{{ i.completed }} (C)</td>
-                    <td>{{ i.notCompleted}}(NC)</td>
+                    <td>{{ i.completed }} <span>&#9989;</span>(C)</td>
+                    <td>{{ i.notCompleted}}<span>&#10060;</span>(NC)</td>
                     <td>{{ i.completed+i.notCompleted }}(T)</td>
                 </tr>
             </tbody>
