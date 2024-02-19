@@ -18,7 +18,7 @@
             </tbody>
         </table>
         <div class="form-group">
-            <h1> {{userName}}'s Todo List</h1>
+            <h1> {{userName}}'s Todo List &#x23F0; </h1>
         </div>
         <table class="userTotaltask-table">
             <!-- <thead>
@@ -142,7 +142,7 @@
                     'numeric'
                     }) }}</td>
                 <td>{{ todo.expireDateTime.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric'
-                    }) }}</td>
+                    }) }}&#8987;</td>
                 <td>{{ todo.priorityName }}</td>
                 <td>
                     <input type="checkbox" [(ngModel)]="todo.status" (change)="updateTodoItemStatus(i)">
