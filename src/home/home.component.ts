@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../app/api.service';
 import { DataserviceService } from '../app/dataservice.service';
+import { error } from 'node:console';
 
 interface TodoItem {
   taskId: number;
@@ -12,6 +13,11 @@ interface TodoItem {
   priorityName: string;
   userId: number;
   status: boolean;
+}
+interface UserReport {
+  priorityName: string;
+  completed: number;
+  notCompleted: number;
 }
 interface payloadTodoItem {
   taskId: number;
@@ -42,6 +48,8 @@ interface sort {
   date: string;
   select: boolean;
   searchTerm: string;
+  pageNum: 0;
+  totalPossiblePage: number;
 }
 
 @Component({
@@ -52,6 +60,7 @@ interface sort {
 
 export class HomeComponent {
   todoItems: TodoItem[] = [];
+  userTaskReport: UserReport[] = [];
   prioritiesFromApi: priorities[] = [];
 
   newtodoItem: payloadTodoItem = {
@@ -68,11 +77,18 @@ export class HomeComponent {
     priority: "none",
     date: "none",
     select: false,
-    searchTerm: ""
+    searchTerm: "",
+    pageNum: 0,
+    totalPossiblePage: 0
   }
   buttonLabel: string = 'Add';
   isAddButtonVisible: boolean = true;
   isEditButtonVisible: boolean = false;
+  isNextButtonVisible: boolean = false;
+  isPreviousButtonVisible: boolean = false;
+  totalTask: number = 0;
+  completedTask: number = 0;
+
   userName: string = this.dataservice.userInfo.userFirstName + " " + this.dataservice.userInfo.userSecondName;
 
 
@@ -86,6 +102,26 @@ export class HomeComponent {
     this.getAllTask();
     this.getDDL();
     this.resetTodoItem();
+    this.getUserReport();
+  }
+  getUserReport() {
+    const url = "/ToDo/UserTaskReport?UserId=" + this.dataservice.userInfo.userId;
+    this.apiService.getOperation(url).subscribe(
+      res => {
+        console.log(res);
+        this.userTaskReport = [];
+        this.totalTask = res.totalTask;
+        this.completedTask = res.completedTask;
+
+        for (const item of res.taskPriorityWiseReport) {
+
+          this.userTaskReport.push(item);
+        }
+      },
+      (error) => {
+        console.error('Error fetching todos:', error);
+      }
+    )
   }
   getAllTask() {
     const url = "/ToDo/GetAllTaskByUserId?UserId=" + this.dataservice.userInfo.userId +
@@ -93,12 +129,14 @@ export class HomeComponent {
       (this.sortLanding.date !== "none" ? ("&creationDate=" + this.sortLanding.date) : "") +
       "&Status=" + (this.sortLanding.select ? "DESC" : "ASC") +
       (this.sortLanding.searchTerm !== "" ? ("&searchTerm=" + this.sortLanding.searchTerm) : "")
-      + "&PageNo=0&PageSize=12";
+      + "&PageNo=" + this.sortLanding.pageNum + "&PageSize=10";
     this.sortLanding.searchTerm = "";
 
     this.apiService.getOperation(url).subscribe(
       res => {
         this.todoItems = [];
+        this.sortLanding.totalPossiblePage = Math.ceil(res.totalCount / 10);
+        this.setPevNextButtonVisibility();
         for (const item of res.data) {
           item.expireDateTime = new Date(item.expireDateTime);
           item.creationDateTime = new Date(item.creationDateTime)
@@ -111,6 +149,27 @@ export class HomeComponent {
         console.error('Error fetching todos:', error);
       }
     );
+  }
+  setPevNextButtonVisibility() {
+    console.log(this.sortLanding.totalPossiblePage);
+    if (this.sortLanding.totalPossiblePage - 1 > this.sortLanding.pageNum) {
+      this.isNextButtonVisible = true;
+    } else {
+      this.isNextButtonVisible = false;
+    }
+    if (this.sortLanding.pageNum != 0) {
+      this.isPreviousButtonVisible = true;
+    } else {
+      this.isPreviousButtonVisible = false;
+    }
+  }
+  next() {
+    this.sortLanding.pageNum++;
+    this.refreshPage();
+  }
+  previous() {
+    this.sortLanding.pageNum--;
+    this.refreshPage();
   }
   getDDL() {
     const urlddl = "/ToDo/GetPriorityDDL?OrderBy=DESC";

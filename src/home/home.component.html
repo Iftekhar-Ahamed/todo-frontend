@@ -1,9 +1,48 @@
 <!-- todo-list.component.html -->
 <div class="todo-container">
     <div class="title-box">
+        <table class="userTotaltask-table">
+            <!-- <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Count</th>
+                </tr>
+            </thead> -->
+            <tbody>
+                <tr *ngFor="let i of userTaskReport;">
+                    <td>{{ i.priorityName }}</td>
+                    <td>{{ i.completed }} (C)</td>
+                    <td>{{ i.notCompleted}}(NC)</td>
+                    <td>{{ i.completed+i.notCompleted }}(T)</td>
+                </tr>
+            </tbody>
+        </table>
         <div class="form-group">
             <h1> {{userName}}'s Todo List</h1>
         </div>
+        <table class="userTotaltask-table">
+            <!-- <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Count</th>
+                </tr>
+            </thead> -->
+            <tbody>
+                <tr>
+                    <td>Total Task</td>
+                    <td>{{totalTask}}</td>
+                </tr>
+                <tr>
+                    <td>Completed Task</td>
+                    <td>{{completedTask}}</td>
+                </tr>
+                <tr>
+                    <td>Pending Task</td>
+                    <td>{{totalTask-completedTask}}</td>
+                </tr>
+            </tbody>
+        </table>
+
     </div>
     <div class="filter-boxes-container">
         <div class="sort-box">
@@ -116,5 +155,9 @@
             </tr>
         </tbody>
     </table>
+    <div class="pagination-box">
+        <button class="pev-button" *ngIf="isPreviousButtonVisible" (click)="previous()">Previous</button>
+        <button class="next-button" *ngIf="isNextButtonVisible" (click)="next()">Next</button>
+    </div>
 
 </div>
