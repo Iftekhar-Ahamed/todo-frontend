@@ -156,11 +156,11 @@ export class HomeComponent {
       (this.sortLanding.priority == "none" ? "" : "&Priority=" + this.sortLanding.priority) +
       (this.sortLanding.date !== "none" ? "&creationDate=" + this.sortLanding.date : "") +
       (this.sortLanding.status !== null && this.sortLanding.status !== undefined ? "&Status=" + this.sortLanding.status : "") +
-      (this.sortLanding.searchTerm !== "" ? "&searchTerm=" + this.sortLanding.searchTerm : "") +
+      ("&searchTerm=" + this.sortLanding.searchTerm) +
       "&PageNo=" +
       this.sortLanding.pageNum +
       "&PageSize=10";
-
+    console.log(url, this.sortLanding.searchTerm);
     this.sortLanding.searchTerm = "";
 
     this.apiService.getOperation(url).subscribe(
@@ -244,7 +244,8 @@ export class HomeComponent {
   }
 
   updateTodoItemStatus(index: number) {
-    this.apiService.postOperation(this.newtodoItem, "/ToDo/UpdateTaskByTaskId").subscribe(res => {
+
+    this.apiService.postOperation(this.todoItems[index], "/ToDo/UpdateTaskByTaskId").subscribe(res => {
       this.refreshPage();
     });
   }
@@ -275,6 +276,7 @@ export class HomeComponent {
     this.newtodoItem.expireDateTime = new Date();
     this.newtodoItem.priorityId = 0;
     this.newtodoItem.status = false;
+    this.newtodoItem.assignedId = this.dataservice.userInfo.userId;
   }
 
   toggleButtons() {
