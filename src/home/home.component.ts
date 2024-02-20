@@ -10,6 +10,10 @@ interface TodoItem {
   expireDateTime: Date;
   creationDateTime: Date;
   priorityId: number;
+  assignedId: number;
+  assigned: string;
+  createBy: string;
+  creatorId: number;
   priorityName: string;
   userId: number;
   status: boolean;
@@ -19,16 +23,16 @@ interface UserReport {
   completed: number;
   notCompleted: number;
 }
-interface payloadTodoItem {
-  taskId: number;
-  taskName: string;
-  taskDescription: string;
-  expireDateTime: Date;
-  creationDateTime: Date;
-  priorityId: number;
-  userId: number;
-  status: boolean;
-}
+// interface payloadTodoItem {
+//   taskId: number;
+//   taskName: string;
+//   taskDescription: string;
+//   expireDateTime: Date;
+//   creationDateTime: Date;
+//   priorityId: number;
+//   userId: number;
+//   status: boolean;
+// }
 interface payloadTodoUpdateItem {
   taskId: number;
   taskName: string;
@@ -42,11 +46,15 @@ interface priorities {
   value: number;
   name: string;
 }
+interface assign {
+  value: number;
+  name: string;
+}
 
 interface sort {
   priority: string;
   date: string;
-  select: boolean;
+  status?: null | number;
   searchTerm: string;
   pageNum: 0;
   totalPossiblePage: number;
@@ -62,21 +70,38 @@ export class HomeComponent {
   todoItems: TodoItem[] = [];
   userTaskReport: UserReport[] = [];
   prioritiesFromApi: priorities[] = [];
+  userlist: assign[] = [];
 
-  newtodoItem: payloadTodoItem = {
+  // newtodoItem: payloadTodoItem = {
+  //   taskId: 0,
+  //   taskName: '',
+  //   taskDescription: '',
+  //   expireDateTime: new Date(),
+  //   creationDateTime: new Date(),
+  //   priorityId: 0,
+  //   userId: 0,
+  //   status: false
+  // };
+
+  newtodoItem: TodoItem = {
     taskId: 0,
     taskName: '',
     taskDescription: '',
+    creatorId: this.dataservice.userInfo.userId,
     expireDateTime: new Date(),
     creationDateTime: new Date(),
     priorityId: 0,
     userId: 0,
-    status: false
+    createBy: '',
+    assignedId: this.dataservice.userInfo.userId,
+    assigned: '',
+    status: false,
+    priorityName: ''
   };
   sortLanding: sort = {
-    priority: "none",
-    date: "none",
-    select: false,
+    priority: "ASC",
+    date: "ASC",
+    status: null,
     searchTerm: "",
     pageNum: 0,
     totalPossiblePage: 0
@@ -101,6 +126,7 @@ export class HomeComponent {
   refreshPage() {
     this.getAllTask();
     this.getDDL();
+    this.getUserDDL();
     this.resetTodoItem();
     this.getUserReport();
   }
@@ -124,12 +150,17 @@ export class HomeComponent {
     )
   }
   getAllTask() {
-    const url = "/ToDo/GetAllTaskByUserId?UserId=" + this.dataservice.userInfo.userId +
-      (this.sortLanding.priority !== "none" ? ("&Priority=" + this.sortLanding.priority) : "") +
-      (this.sortLanding.date !== "none" ? ("&creationDate=" + this.sortLanding.date) : "") +
-      "&Status=" + (this.sortLanding.select ? "DESC" : "ASC") +
-      (this.sortLanding.searchTerm !== "" ? ("&searchTerm=" + this.sortLanding.searchTerm) : "")
-      + "&PageNo=" + this.sortLanding.pageNum + "&PageSize=10";
+    const url =
+      "/ToDo/GetAllTaskByUserId?UserId=" +
+      this.dataservice.userInfo.userId +
+      (this.sortLanding.priority == "none" ? "" : "&Priority=" + this.sortLanding.priority) +
+      (this.sortLanding.date !== "none" ? "&creationDate=" + this.sortLanding.date : "") +
+      (this.sortLanding.status !== null && this.sortLanding.status !== undefined ? "&Status=" + this.sortLanding.status : "") +
+      (this.sortLanding.searchTerm !== "" ? "&searchTerm=" + this.sortLanding.searchTerm : "") +
+      "&PageNo=" +
+      this.sortLanding.pageNum +
+      "&PageSize=10";
+
     this.sortLanding.searchTerm = "";
 
     this.apiService.getOperation(url).subscribe(
@@ -186,6 +217,21 @@ export class HomeComponent {
       }
     );
   }
+  getUserDDL() {
+    const userddl = "/ToDo/GetAllUserDDL?OrderBy=ASC";
+    this.apiService.getOperation(userddl).subscribe(
+      res => {
+        this.userlist = [];
+        for (const item of res) {
+          this.userlist.push(item);
+        }
+
+      },
+      (error) => {
+        console.error('Error fetching todos:', error);
+      }
+    );
+  }
 
   addTodo() {
     if (this.newtodoItem.taskName.trim() !== '') {
@@ -198,33 +244,12 @@ export class HomeComponent {
   }
 
   updateTodoItemStatus(index: number) {
-    const updatePayload: payloadTodoUpdateItem = {
-      taskId: this.todoItems[index].taskId,
-      taskName: this.todoItems[index].taskName,
-      taskDescription: this.todoItems[index].taskDescription,
-      expireDateTime: this.todoItems[index].expireDateTime,
-      creationDateTime: this.todoItems[index].creationDateTime,
-      priorityId: this.todoItems[index].priorityId,
-      status: this.todoItems[index].status
-    }
-
-    this.apiService.postOperation(updatePayload, "/ToDo/UpdateTaskByTaskId").subscribe(res => {
+    this.apiService.postOperation(this.newtodoItem, "/ToDo/UpdateTaskByTaskId").subscribe(res => {
       this.refreshPage();
     });
   }
   updateTodoItem() {
-    console.log(this.newtodoItem.expireDateTime);
-    const updatePayload: payloadTodoUpdateItem = {
-      taskId: this.newtodoItem.taskId,
-      taskName: this.newtodoItem.taskName,
-      taskDescription: this.newtodoItem.taskDescription,
-      expireDateTime: this.newtodoItem.expireDateTime,
-      creationDateTime: this.newtodoItem.creationDateTime,
-      priorityId: this.newtodoItem.priorityId,
-      status: this.newtodoItem.status
-    }
-
-    this.apiService.postOperation(updatePayload, "/ToDo/UpdateTaskByTaskId").subscribe(res => {
+    this.apiService.postOperation(this.newtodoItem, "/ToDo/UpdateTaskByTaskId").subscribe(res => {
       this.refreshPage();
     });
   }
@@ -240,13 +265,7 @@ export class HomeComponent {
     if (!this.isEditButtonVisible) {
       this.toggleButtons();
     }
-    this.newtodoItem.taskId = this.todoItems[index].taskId;
-    this.newtodoItem.taskName = this.todoItems[index].taskName;
-    this.newtodoItem.taskDescription = this.todoItems[index].taskDescription;
-    this.newtodoItem.expireDateTime = this.todoItems[index].expireDateTime;
-    this.newtodoItem.creationDateTime = this.todoItems[index].creationDateTime;
-    this.newtodoItem.priorityId = this.todoItems[index].priorityId;
-    this.newtodoItem.status = this.todoItems[index].status;
+    this.newtodoItem = Object.assign({}, this.todoItems[index]);
   }
 
   resetTodoItem() {

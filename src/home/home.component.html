@@ -49,7 +49,6 @@
             <div class="form-group">
                 <label for="task">Priority</label>
                 <select id="priority" [(ngModel)]="sortLanding.priority" placeholder="Priority">
-                    <option value="none">none</option>
                     <option value="ASC">Low to High</option>
                     <option value="DESC">High to Low </option>
                 </select>
@@ -57,14 +56,17 @@
             <div class="form-group">
                 <label for="taskdescription">Creation Date</label>
                 <select id="priority" [(ngModel)]="sortLanding.date" placeholder="Priority">
-                    <option value="none">none</option>
                     <option value="ASC">Oldest</option>
                     <option value="DESC">Earliest </option>
                 </select>
             </div>
             <div class="form-group">
-                <label for="taskdescription">Is Completed</label>
-                <input type="checkbox" [(ngModel)]="sortLanding.select">
+                <label for="taskdescription">Is Complete</label>
+                <select id="status" [(ngModel)]="sortLanding.status" placeholder="Priority">
+                    <option [ngValue]="null">ALL</option>
+                    <option [ngValue]="true">YES</option>
+                    <option [ngValue]="false">NO</option>
+                </select>
             </div>
             <div class="form-group">
                 <button class="add-button" (click)="refreshPage()">Show</button>
@@ -104,10 +106,17 @@
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
         </div>
-
+        <div class="form-group">
+            <label for="Assign">Assign:</label>
+            <select id="Assign" [(ngModel)]="newtodoItem.assignedId" placeholder="Assign">
+                <option *ngFor="let user of userlist" [value]="user.value">
+                    {{ user.name }}
+                </option>
+            </select>
+        </div>
 
         <div class="form-group">
-            <label for="priority">Priority:</label>
+            <label for="priority">Priority</label>
             <select id="priority" [(ngModel)]="newtodoItem.priorityId" placeholder="Priority">
                 <option *ngFor="let priority of prioritiesFromApi" [value]="priority.value">
                     {{ priority.name }}
@@ -129,6 +138,8 @@
                 <th>Task Description</th>
                 <th>Create Date</th>
                 <th>Due Date</th>
+                <th>Create By</th>
+                <th>Assigned</th>
                 <th>Priority</th>
                 <th>Status</th>
                 <th>Action</th>
@@ -143,6 +154,8 @@
                     }) }}</td>
                 <td>{{ todo.expireDateTime.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric'
                     }) }}&#8987;</td>
+                <td>{{ todo.createBy }}</td>
+                <td>{{ todo.assigned }}</td>
                 <td>{{ todo.priorityName }}</td>
                 <td>
                     <input type="checkbox" [(ngModel)]="todo.status" (change)="updateTodoItemStatus(i)">
