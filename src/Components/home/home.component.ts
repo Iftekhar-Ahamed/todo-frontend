@@ -4,6 +4,7 @@ import { DataserviceService } from '../../app/dataservice.service';
 import { error } from 'node:console';
 import { MatDialog } from '@angular/material/dialog';
 import { PopupComponent } from '../popup/popup.component';
+import { YesNoPopupComponent } from '../yes-no-popup/yes-no-popup.component';
 
 interface TodoItem {
   taskId: number;
@@ -98,6 +99,7 @@ export class HomeComponent {
     pageNum: 0,
     totalPossiblePage: 0
   }
+  pagelist = new Array();
   buttonLabel: string = 'Add';
   isAddButtonVisible: boolean = true;
   isEditButtonVisible: boolean = false;
@@ -112,15 +114,6 @@ export class HomeComponent {
 
 
   constructor(private apiService: ApiService, private dataservice: DataserviceService, private dialog: MatDialog,) { }
-  openPopup(message: string): void {
-    const dialogRef = this.dialog.open(PopupComponent, {
-      data: { message },
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      console.log('Popup closed');
-    });
-  }
   ngOnInit() {
     this.refreshPage();
   }
@@ -130,6 +123,9 @@ export class HomeComponent {
     this.getUserDDL();
     this.resetTodoItem();
     this.getUserReport();
+  }
+  PageReset() {
+    this.sortLanding.pageNum = 0;
   }
   getUserReport() {
     const url = "/ToDo/UserTaskReport?UserId=" + this.dataservice.userInfo.userId;
@@ -158,20 +154,23 @@ export class HomeComponent {
       (this.sortLanding.status !== null && this.sortLanding.status !== undefined ? "&Status=" + this.sortLanding.status : "") +
       ("&searchTerm=" + this.sortLanding.searchTerm) +
       "&PageNo=" +
-      this.sortLanding.pageNum +
+      (this.sortLanding.pageNum) +
       "&PageSize=" + this.pageSize;
     this.sortLanding.searchTerm = "";
 
     this.apiService.getOperation(url).subscribe(
       res => {
         this.todoItems = [];
+        this.pagelist = [];
         this.sortLanding.totalPossiblePage = Math.ceil(res.totalCount / this.pageSize);
+        for (let i = 0; i < this.sortLanding.totalPossiblePage; i++) {
+          this.pagelist.push(i);
+        }
         this.setPevNextButtonVisibility();
         for (const item of res.data) {
           item.expireDateTime = new Date(item.expireDateTime);
           item.creationDateTime = new Date(item.creationDateTime)
           this.todoItems.push(item);
-
         }
 
       },
@@ -196,6 +195,9 @@ export class HomeComponent {
     this.sortLanding.pageNum++;
     this.refreshPage();
   }
+  jump() {
+    this.refreshPage();
+  }
   previous() {
     this.sortLanding.pageNum--;
     this.refreshPage();
@@ -208,7 +210,7 @@ export class HomeComponent {
         for (const item of res) {
           this.prioritiesFromApi.push(item);
         }
-
+        this.newtodoItem.priorityId = 1;
       },
       (error) => {
         console.error('Error fetching todos:', error);
@@ -236,7 +238,7 @@ export class HomeComponent {
       this.newtodoItem.userId = this.dataservice.userInfo.userId;
       this.apiService.postOperation(this.newtodoItem, "/ToDo/CreateTask").subscribe(res => {
         this.refreshPage();
-        this.openPopup(res.message);
+        this.openPopup(res.message, true, "OK");
       });
 
     }
@@ -283,5 +285,25 @@ export class HomeComponent {
     this.isAddButtonVisible = !this.isAddButtonVisible;
     this.isEditButtonVisible = !this.isEditButtonVisible;
     this.resetTodoItem();
+  }
+  openPopup(message: string, v: boolean, actionMsg: string): void {
+    const dialogRef = this.dialog.open(PopupComponent, {
+      data: { message, v, actionMsg },
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      console.log('Popup closed');
+    });
+  }
+  openPopupConfrimation(i: number): void {
+    const dialogRef = this.dialog.open(YesNoPopupComponent, {
+      data: { "Do you want to delete": String },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'yes') {
+        this.deleteTodoItem(i);
+      }
+    });
   }
 }

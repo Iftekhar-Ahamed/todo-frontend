@@ -22,6 +22,13 @@ export class PopupComponent {
     this.actionMsg = data.actionMsg;
     this.v = data.v;
   }
+  onNoClick(): void {
+    this.dialogRef.close('no');
+  }
+
+  onYesClick(): void {
+    this.dialogRef.close('yes');
+  }
 
   close(): void {
     this.dialogRef.close();

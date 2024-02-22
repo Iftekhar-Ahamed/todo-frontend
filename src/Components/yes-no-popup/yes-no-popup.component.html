@@ -1,0 +1,12 @@
+<div class="container">
+    <div class="cookiesContent" id="cookiesPopup">
+        <button class="close" (click)="close()">✖</button>
+        <img src="../../assets/alert.png" alt="cookies-img" />
+        <p>{{ message }}</p>
+
+        <div class="button-container">
+            <button class="accept" mat-button (click)="onYesClick()">Yes</button>
+            <button class="accept" mat-button (click)="onNoClick()">No</button>
+        </div>
+    </div>
+</div>

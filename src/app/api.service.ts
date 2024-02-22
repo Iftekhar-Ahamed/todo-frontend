@@ -7,7 +7,7 @@ import { DataserviceService } from './dataservice.service';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:5184';
+  private baseUrl = 'https://localhost:44360';
 
   constructor(private http: HttpClient, private data: DataserviceService) { }
 

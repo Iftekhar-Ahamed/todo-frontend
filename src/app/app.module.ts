@@ -11,11 +11,13 @@ import { HomeModule } from '../Components/home/home.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { PopupComponent } from '../Components/popup/popup.component';
 import { CommonModule } from '@angular/common';
+import { YesNoPopupComponent } from '../Components/yes-no-popup/yes-no-popup.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    PopupComponent
+    PopupComponent,
+    YesNoPopupComponent
   ],
   imports: [
     CommonModule,

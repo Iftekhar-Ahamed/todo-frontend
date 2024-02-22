@@ -63,7 +63,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <button class="add-button" (click)="refreshPage()">Show</button>
+                <button class="common-button" (click)="PageReset();refreshPage()">Show</button>
             </div>
 
         </div>
@@ -75,10 +75,10 @@
                     class="text-input" (input)="onSearchInputChange()">
             </div>
             <div class="form-group">
-                <button class="add-button" (click)="refreshPage()">Search</button>
+                <button class="common-button" (click)="PageReset();refreshPage()">Search</button>
             </div>
             <div class="form-group">
-                <button class="add-button" (click)="refreshPage()">All</button>
+                <button class="common-button" (click)="PageReset();refreshPage()">All</button>
             </div>
 
         </div>
@@ -159,7 +159,7 @@
                 </td>
                 <td>
                     <button class="edit-button" (click)="editTodo(i)">Edit</button>
-                    <button class="delete-button" (click)="deleteTodoItem(i)">Delete</button>
+                    <button class="delete-button" (click)="openPopupConfrimation(i)">Delete</button>
 
                 </td>
             </tr>
@@ -168,6 +168,16 @@
     <div class="pagination-box">
         <button class="pev-button" *ngIf="isPreviousButtonVisible" (click)="previous()">Previous</button>
         <button class="next-button" *ngIf="isNextButtonVisible" (click)="next()">Next</button>
+        <span class="page-dropdowntext">Jump to Page</span>
+        <ng-container *ngIf="sortLanding.totalPossiblePage > 0">
+            <select class="page-dropdown" [(ngModel)]="sortLanding.pageNum" (change)="jump()">
+                <option *ngFor="let page of pagelist" [value]="page">{{ page + 1 }}</option>
+            </select>
+        </ng-container>
+
+
     </div>
+
+
 
 </div>
