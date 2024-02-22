@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../app/api.service';
+import { ApiService } from '../../app/api.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { PopupComponent } from '../app/popup/popup.component';
-import { DataserviceService } from '../app/dataservice.service';
+import { PopupComponent } from '../popup/popup.component';
+import { DataserviceService } from '../../app/dataservice.service';
 
 @Component({
   selector: 'app-login',
@@ -18,6 +18,8 @@ export class LoginComponent {
 
   constructor(private apiService: ApiService, private router: Router, private dialog: MatDialog, private data: DataserviceService) {
   }
+
+
 
   onSubmit() {
     const apiUrl = "/Auth/LogIn?UserName=" + this.usernameInput + "&PassWord=" + this.passwordInput;
@@ -36,18 +38,18 @@ export class LoginComponent {
         if (res.value.message.message == "Welcome User") {
           this.router.navigate(['/home']);
         } else {
-          this.openPopup(res.value.message.message);
+          this.openPopup(res.value.message.message, true, "Try Again");
         }
       },
       (error) => {
-        this.openPopup("Server Error");
+        this.openPopup("Server Error", true, "Try Again");
       }
     );
   }
 
-  openPopup(message: string): void {
+  openPopup(message: string, v: boolean, actionMsg: string): void {
     const dialogRef = this.dialog.open(PopupComponent, {
-      data: { message },
+      data: { message, v, actionMsg },
     });
 
     dialogRef.afterClosed().subscribe(() => {

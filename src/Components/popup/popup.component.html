@@ -3,6 +3,8 @@
         <button class="close" (click)="close()">✖</button>
         <img src="https://cdn-icons-png.flaticon.com/512/1047/1047711.png" alt="cookies-img" />
         <p>{{ message }}</p>
-        <button class="accept" (click)="close()">Try Again</button>
+
+        <!-- Use *ngIf to conditionally show/hide the button -->
+        <button class="accept" *ngIf="v" (click)="close()">{{ actionMsg }}</button>
     </div>
 </div>

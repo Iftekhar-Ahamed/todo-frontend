@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import { ApiService } from '../app/api.service';
-import { DataserviceService } from '../app/dataservice.service';
+import { ApiService } from '../../app/api.service';
+import { DataserviceService } from '../../app/dataservice.service';
 import { error } from 'node:console';
+import { MatDialog } from '@angular/material/dialog';
+import { PopupComponent } from '../popup/popup.component';
 
 interface TodoItem {
   taskId: number;
@@ -72,16 +74,6 @@ export class HomeComponent {
   prioritiesFromApi: priorities[] = [];
   userlist: assign[] = [];
 
-  // newtodoItem: payloadTodoItem = {
-  //   taskId: 0,
-  //   taskName: '',
-  //   taskDescription: '',
-  //   expireDateTime: new Date(),
-  //   creationDateTime: new Date(),
-  //   priorityId: 0,
-  //   userId: 0,
-  //   status: false
-  // };
 
   newtodoItem: TodoItem = {
     taskId: 0,
@@ -111,6 +103,7 @@ export class HomeComponent {
   isEditButtonVisible: boolean = false;
   isNextButtonVisible: boolean = false;
   isPreviousButtonVisible: boolean = false;
+  pageSize: number = 10;
   totalTask: number = 0;
   completedTask: number = 0;
 
@@ -118,8 +111,16 @@ export class HomeComponent {
 
 
 
-  constructor(private apiService: ApiService, private dataservice: DataserviceService) { }
+  constructor(private apiService: ApiService, private dataservice: DataserviceService, private dialog: MatDialog,) { }
+  openPopup(message: string): void {
+    const dialogRef = this.dialog.open(PopupComponent, {
+      data: { message },
+    });
 
+    dialogRef.afterClosed().subscribe(() => {
+      console.log('Popup closed');
+    });
+  }
   ngOnInit() {
     this.refreshPage();
   }
@@ -134,7 +135,6 @@ export class HomeComponent {
     const url = "/ToDo/UserTaskReport?UserId=" + this.dataservice.userInfo.userId;
     this.apiService.getOperation(url).subscribe(
       res => {
-        console.log(res);
         this.userTaskReport = [];
         this.totalTask = res.totalTask;
         this.completedTask = res.completedTask;
@@ -159,14 +159,13 @@ export class HomeComponent {
       ("&searchTerm=" + this.sortLanding.searchTerm) +
       "&PageNo=" +
       this.sortLanding.pageNum +
-      "&PageSize=10";
-    console.log(url, this.sortLanding.searchTerm);
+      "&PageSize=" + this.pageSize;
     this.sortLanding.searchTerm = "";
 
     this.apiService.getOperation(url).subscribe(
       res => {
         this.todoItems = [];
-        this.sortLanding.totalPossiblePage = Math.ceil(res.totalCount / 10);
+        this.sortLanding.totalPossiblePage = Math.ceil(res.totalCount / this.pageSize);
         this.setPevNextButtonVisibility();
         for (const item of res.data) {
           item.expireDateTime = new Date(item.expireDateTime);
@@ -182,7 +181,6 @@ export class HomeComponent {
     );
   }
   setPevNextButtonVisibility() {
-    console.log(this.sortLanding.totalPossiblePage);
     if (this.sortLanding.totalPossiblePage - 1 > this.sortLanding.pageNum) {
       this.isNextButtonVisible = true;
     } else {
@@ -238,6 +236,7 @@ export class HomeComponent {
       this.newtodoItem.userId = this.dataservice.userInfo.userId;
       this.apiService.postOperation(this.newtodoItem, "/ToDo/CreateTask").subscribe(res => {
         this.refreshPage();
+        this.openPopup(res.message);
       });
 
     }
@@ -255,6 +254,7 @@ export class HomeComponent {
     });
   }
   deleteTodoItem(index: number) {
+
     this.apiService.deleteTask("/ToDo/DeleteTaskByTaskId", this.todoItems[index].taskId).subscribe(res => {
       this.refreshPage();
     });
