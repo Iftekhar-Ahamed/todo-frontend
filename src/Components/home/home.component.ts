@@ -238,7 +238,7 @@ export class HomeComponent {
       this.newtodoItem.userId = this.dataservice.userInfo.userId;
       this.apiService.postOperation(this.newtodoItem, "/ToDo/CreateTask").subscribe(res => {
         this.refreshPage();
-        this.openPopup(res.message, true, "OK");
+        this.openPopup(res.message, false, "OK");
       });
 
     }
@@ -253,6 +253,7 @@ export class HomeComponent {
   updateTodoItem() {
     this.apiService.postOperation(this.newtodoItem, "/ToDo/UpdateTaskByTaskId").subscribe(res => {
       this.refreshPage();
+      this.openPopup(res.message, false, "OK");
     });
   }
   deleteTodoItem(index: number) {
