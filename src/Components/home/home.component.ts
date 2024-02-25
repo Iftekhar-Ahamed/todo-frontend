@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../../app/api.service';
 import { DataserviceService } from '../../app/dataservice.service';
-import { error } from 'node:console';
+import { log } from 'node:console';
 import { MatDialog } from '@angular/material/dialog';
 import { PopupComponent } from '../popup/popup.component';
 import { YesNoPopupComponent } from '../yes-no-popup/yes-no-popup.component';
@@ -26,16 +26,7 @@ interface UserReport {
   completed: number;
   notCompleted: number;
 }
-// interface payloadTodoItem {
-//   taskId: number;
-//   taskName: string;
-//   taskDescription: string;
-//   expireDateTime: Date;
-//   creationDateTime: Date;
-//   priorityId: number;
-//   userId: number;
-//   status: boolean;
-// }
+
 interface payloadTodoUpdateItem {
   taskId: number;
   taskName: string;
@@ -107,13 +98,15 @@ export class HomeComponent {
   isPreviousButtonVisible: boolean = false;
   pageSize: number = 10;
   totalTask: number = 0;
+  isPopupOpen: boolean = false;
   completedTask: number = 0;
+
 
   userName: string = this.dataservice.userInfo.userFirstName + " " + this.dataservice.userInfo.userSecondName;
 
 
 
-  constructor(private apiService: ApiService, private dataservice: DataserviceService, private dialog: MatDialog,) { }
+  constructor(private apiService: ApiService, private dataservice: DataserviceService, private dialog: MatDialog) { }
   ngOnInit() {
     this.refreshPage();
   }
@@ -140,8 +133,10 @@ export class HomeComponent {
           this.userTaskReport.push(item);
         }
       },
-      (error) => {
-        console.error('Error fetching todos:', error);
+      (log) => {
+        if (log.error.split(" ")[0] === "TOKEN") {
+          this.tokenRefresh(log.error.split(" ")[1]);
+        }
       }
     )
   }
@@ -174,8 +169,10 @@ export class HomeComponent {
         }
 
       },
-      (error) => {
-        console.error('Error fetching todos:', error);
+      (log) => {
+        if (log.error.split(" ")[0] === "TOKEN") {
+          this.tokenRefresh(log.error.split(" ")[1]);
+        }
       }
     );
   }
@@ -212,8 +209,10 @@ export class HomeComponent {
         }
         this.newtodoItem.priorityId = 1;
       },
-      (error) => {
-        console.error('Error fetching todos:', error);
+      (log) => {
+        if (log.error.split(" ")[0] === "TOKEN") {
+          this.tokenRefresh(log.error.split(" ")[1]);
+        }
       }
     );
   }
@@ -227,8 +226,10 @@ export class HomeComponent {
         }
 
       },
-      (error) => {
-        console.error('Error fetching todos:', error);
+      (log) => {
+        if (log.error.split(" ")[0] === "TOKEN") {
+          this.tokenRefresh(log.error.split(" ")[1]);
+        }
       }
     );
   }
@@ -239,6 +240,10 @@ export class HomeComponent {
       this.apiService.postOperation(this.newtodoItem, "/ToDo/CreateTask").subscribe(res => {
         this.refreshPage();
         this.openPopup(res.message, false, "OK");
+      }, (log) => {
+        if (log.error.split(" ")[0] === "TOKEN") {
+          this.tokenRefresh(log.error.split(" ")[1]);
+        }
       });
 
     }
@@ -248,18 +253,30 @@ export class HomeComponent {
 
     this.apiService.postOperation(this.todoItems[index], "/ToDo/UpdateTaskByTaskId").subscribe(res => {
       this.refreshPage();
+    }, (log) => {
+      if (log.error.split(" ")[0] === "TOKEN") {
+        this.tokenRefresh(log.error.split(" ")[1]);
+      }
     });
   }
   updateTodoItem() {
     this.apiService.postOperation(this.newtodoItem, "/ToDo/UpdateTaskByTaskId").subscribe(res => {
       this.refreshPage();
       this.openPopup(res.message, false, "OK");
+    }, (log) => {
+      if (log.error.split(" ")[0] === "TOKEN") {
+        this.tokenRefresh(log.error.split(" ")[1]);
+      }
     });
   }
   deleteTodoItem(index: number) {
 
     this.apiService.deleteTask("/ToDo/DeleteTaskByTaskId", this.todoItems[index].taskId).subscribe(res => {
       this.refreshPage();
+    }, (log) => {
+      if (log.error.split(" ")[0] === "TOKEN") {
+        this.tokenRefresh(log.error.split(" ")[1]);
+      }
     });
   }
   onSearchInputChange() {
@@ -293,7 +310,8 @@ export class HomeComponent {
     });
 
     dialogRef.afterClosed().subscribe(() => {
-      console.log('Popup closed');
+      this.isPopupOpen = false;
+      this.refreshPage();
     });
   }
   openPopupConfrimation(i: number): void {
@@ -306,5 +324,16 @@ export class HomeComponent {
         this.deleteTodoItem(i);
       }
     });
+  }
+  tokenRefresh(token: string) {
+    var user = this.dataservice.getData();
+    this.dataservice.userInfo = user;
+    this.dataservice.userInfo.userToken = token;
+    this.dataservice.setData();
+    if (this.isPopupOpen === false) {
+      this.isPopupOpen = true;
+      this.openPopup("Tocken Changed", true, "Reload again");
+    }
+
   }
 }

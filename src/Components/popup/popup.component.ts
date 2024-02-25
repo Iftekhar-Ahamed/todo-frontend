@@ -14,6 +14,7 @@ export class PopupComponent {
   actionMsg: string = '';
   v: boolean = false;
 
+
   constructor(
     public dialogRef: MatDialogRef<PopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { message: string, v: boolean, actionMsg: string }
@@ -21,13 +22,6 @@ export class PopupComponent {
     this.message = data.message;
     this.actionMsg = data.actionMsg;
     this.v = data.v;
-  }
-  onNoClick(): void {
-    this.dialogRef.close('no');
-  }
-
-  onYesClick(): void {
-    this.dialogRef.close('yes');
   }
 
   close(): void {
